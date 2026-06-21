@@ -21,7 +21,7 @@ I'm starting with this `SIGPIPE` crash, but I'm going to write up several of the
 
 ## Roam crashes silently sometimes when re-entering the foreground on iOS
 
-Sometime at the beginning of this year, my wife started experiencing crashes when she re-opened the Roam app from the background. I never saw this crash on my device, and it didn't happen repeatably. But Roam crashed enough that it was annoying and worth spending some time to fix.
+Sometime at the beginning of this year, my friend started experiencing crashes when she re-opened the Roam app from the background. I never saw this crash on my device, and it didn't happen repeatably. But Roam crashed enough that it was annoying and worth spending some time to fix.
 
 The issue could be reproduced about 60% of the time with the following steps
 
@@ -104,7 +104,7 @@ After investigating the problem I can also explain why I never saw this crash on
 
 This crash was very difficult to troubleshoot because it didn't produce a crash log. Apple's crash reporter is top-notch and provides privacy-friendly opt-in reports for all app crashes, but it does have its limits. This crash was one of those limitations. It never got reported to me because apple's crash reporter does not consider `SIGPIPE` exits as errors, so it does not report them.
 
-I never would have caught it without help from a user (my wife) and access to a physically crashing device. To prevent this silent crash and others like it from going unnoticed, I added a few stopgaps so `Roam` is a bit noisier when exiting.
+I never would have caught it without help from a friend and access to a physically crashing device. To prevent this silent crash and others like it from going unnoticed, I added a few stopgaps so `Roam` is a bit noisier when exiting.
 
 ```swift
 /// SwiftUI main app initializer
