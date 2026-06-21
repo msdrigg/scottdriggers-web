@@ -1,0 +1,75 @@
+---
+slug: imessage-viewer
+title: View your iMessage history in the browser
+authors: msdrigg
+tags:
+    - projects
+draft: true
+---
+
+import ImessageViewer from "./ImessageViewer";
+
+I used AI to build a [command-line tool](https://github.com/msdrigg/imessage-viewer) that reads the macOS Messages
+database and renders a conversation as a faithful copy of the iOS Messages UI including bubbles, tapbacks,
+replies, edit history, link previews, voice-messages + transcripts, and even attachments. This post is that same renderer,
+**moved entirely into your browser**. Drop in your `chat.db` and it reconstructs the conversation and charts
+your message activity without anything ever leaving your computer.
+
+:::info Your messages never leave this page
+Everything below runs locally in your browser via WebAssembly. The database you select is read into memory and
+parsed on-device; **nothing is uploaded to any server**. You can confirm it: open your browser's Network tab,
+or just turn off Wi-Fi after the page loads — it still works.
+:::
+
+{/* truncate */}
+
+## Try it
+
+<ImessageViewer />
+
+### Getting your `chat.db`
+
+macOS protects `~/Library/Messages` behind [Full Disk Access](https://support.apple.com/guide/security/controlling-app-access-to-files-secc01717b9c/web),
+and a website can never read a file by path. Browsers can only ever receives bytes you hand it through a file picker, and
+the picker itself can't reach the protected folder, so the trick is to **copy the database out of it first**, then
+select the copy:
+
+1. In Finder, press <kbd>⌘</kbd><kbd>⇧</kbd><kbd>G</kbd> and paste `~/Library/Messages/`
+2. Copy **`chat.db`** to your Desktop
+3. Drop that copy into the box above
+
+If your most recent messages are missing, they're still sitting in the write-ahead log. Either copy
+`chat.db-wal` and `chat.db-shm` alongside it, or run this once in Terminal first to fold them in:
+
+```bash
+sqlite3 ~/Library/Messages/chat.db "PRAGMA wal_checkpoint(TRUNCATE);"
+```
+
+Then **Export .txt** to save a plain-text transcript of any conversation, or **Export .html** for a
+self-contained copy of the rendered thread.
+
+## How it works
+
+The CLI is Node-only and macOS-only. iMessage stores chats in a local sqlite database (chat.db), so the cli can lean on the built-in `node:sqlite` for reading most chat data. For decoding messages and rendering attachments, it shells out to `plutil`/`sips`/`ffmpeg`. To take screenshots automatically, it uses Puppeteer. To run in the browser, each of those had to go:
+
+| In the CLI | In the browser |
+| --- | --- |
+| `node:sqlite` reading `chat.db` on disk | [**sql.js**](https://sql.js.org) (SQLite compiled to WASM) reading the file's bytes in memory |
+| `Buffer`-based `attributedBody` decoder | the same [typedstream decoder](https://github.com/dgelessus/python-typedstream), with `Buffer` polyfilled in the client bundle |
+| shelling out to `plutil` for plists | the pure-JS [`bplist-parser`](https://www.npmjs.com/package/bplist-parser), feeding the same `NSKeyedArchiver` unarchiver |
+| hand-built SVG activity chart | [recharts](https://recharts.org) |
+| Puppeteer screenshots | the browser _is_ the renderer — the conversation is drawn into a sandboxed `<iframe>` |
+
+The interesting part is how little of the core logic changed. Modern Messages almost never stores plaintext in
+`message.text`; the body lives in `message.attributedBody`, an Apple `typedstream` (NSArchiver) blob. Link previews,
+app cards, and a message's edit history are `NSKeyedArchiver` binary plists in other columns. These decoders act on plain bytes, so they port to the browser essentially unchanged once
+`Buffer` exists. The SQL queries are identical; only the engine underneath them swapped from `node:sqlite` to sql.js.
+
+### What's not included
+
+This browser build is **text-first**. Photos, videos, and voice-message audio live as separate files in
+`~/Library/Messages/Attachments` (often many gigabytes), so they're not uploaded — media renders as a labelled
+placeholder instead. Everything derived from the database itself still comes through: text, reactions, replies,
+link previews, app-message cards, edit history, and the on-device transcript of voice messages.
+
+If you want to get automated screenshots, link preview and attachment rendering and audio message playback, you can download the cli [on GitHub](https://github.com/msdrigg/imessage-viewer).
