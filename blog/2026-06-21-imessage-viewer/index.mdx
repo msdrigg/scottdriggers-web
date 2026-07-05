@@ -50,7 +50,7 @@ self-contained copy of the rendered thread.
 
 ## How it works
 
-The CLI is Node-only and macOS-only. iMessage stores chats in a local sqlite database (chat.db), so the cli can lean on the built-in `node:sqlite` for reading most chat data. For decoding messages and rendering attachments, it shells out to `plutil`/`sips`/`ffmpeg`. To take screenshots automatically, it uses Puppeteer. To run in the browser, each of those had to go:
+The CLI is Node-only and macOS-only. iMessage stores chats in a local sqlite database (chat.db), so the cli can lean on the built-in `node:sqlite` for reading most chat data. For decoding messages and rendering attachments, it shells out to `plutil`/`sips`/`ffmpeg`. To take screenshots automatically, it uses Puppeteer. To port this to the browser, I found browser-js replacements or dropped them entirely.
 
 | In the CLI | In the browser |
 | --- | --- |
@@ -72,4 +72,4 @@ This browser build is **text-first**. Photos, videos, and voice-message audio li
 placeholder instead. Everything derived from the database itself still comes through: text, reactions, replies,
 link previews, app-message cards, edit history, and the on-device transcript of voice messages.
 
-If you want to get automated screenshots, link preview and attachment rendering and audio message playback, you can download the cli [on GitHub](https://github.com/msdrigg/imessage-viewer).
+If you want to get automated screenshots, link preview and attachment rendering and audio message playback, you can clone the full cli [on GitHub](https://github.com/msdrigg/imessage-viewer).
