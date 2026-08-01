@@ -147,40 +147,7 @@ else:
     print(f"Warning: Logo not found at {LOGO_PATH}")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-#  STEP 6: "challenge me" text below QR
-# ═══════════════════════════════════════════════════════════════════════════════
-
-from PIL import ImageFont
-
-def load_font(size, bold=False):
-    candidates = [
-        "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
-    ] if bold else [
-        "/System/Library/Fonts/Supplemental/Arial.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-    ]
-    for p in candidates:
-        if os.path.exists(p):
-            return ImageFont.truetype(p, size)
-    # load_default() is a small bitmap font and will look broken at this size
-    raise SystemExit("No usable TrueType font found; add one to load_font()'s candidates.")
-
-draw = ImageDraw.Draw(img)
-qr_bottom = (N - border) * ms
-text_y = qr_bottom + int(ms * 0.8)
-font_size = int(ms * 2.8)
-font = load_font(font_size, bold=True)
-text = "challenge me"
-bbox = draw.textbbox((0, 0), text, font=font)
-tw = bbox[2] - bbox[0]
-tx = (actual_size - tw) // 2
-draw.text((tx, text_y), text, fill=QR_GREEN + (255,), font=font)
-
-# ═══════════════════════════════════════════════════════════════════════════════
-#  STEP 7: Rounded outer corners + transparent background
+#  STEP 6: Rounded outer corners + transparent background
 # ═══════════════════════════════════════════════════════════════════════════════
 
 outer_mask = Image.new("L", (actual_size, actual_size), 0)

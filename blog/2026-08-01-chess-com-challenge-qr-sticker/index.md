@@ -8,7 +8,7 @@ tags:
 draft: true
 ---
 
-I wanted a sticker I could put on my laptop that lets anyone challenge me on chess.com by pointing their phone at it. The obvious answer is a QR code, but a plain black-and-white QR code looks like a parking meter. So I wrote a ~150 line Python script that renders one in chess.com's green-on-cream palette with rounded modules and the logo dropped into the middle.
+I wanted a sticker I could put on my laptop that lets anyone challenge me on chess.com by pointing their phone at it. The obvious answer is a QR code, but a plain black-and-white QR code looks like a parking meter. So I wrote a ~170 line Python script that renders one in chess.com's green-on-cream palette with rounded modules and the logo dropped into the middle.
 
 ![The generated challenge sticker](sticker-example.png)
 
