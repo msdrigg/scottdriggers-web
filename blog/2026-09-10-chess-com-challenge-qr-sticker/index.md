@@ -59,4 +59,4 @@ Args are `URL`, `output path`, and optionally a `logo path`. It renders at 8192Ã
 
 You can point it at a direct challenge link (`https://link.chess.com/play/...`) instead of a profile URL if you want the scan to open a game invite rather than a profile â€” the shorter URL also drops the QR to a lower version with chunkier, easier-to-scan modules.
 
-The full script is [in this post's folder in the site repo](https://github.com/msdrigg/scottdriggers-web/tree/main/blog/2026-08-01-chess-com-challenge-qr-sticker).
+The full script is [in this post's folder in the site repo](https://github.com/msdrigg/scottdriggers-web/tree/main/blog/2026-09-10-chess-com-challenge-qr-sticker).
